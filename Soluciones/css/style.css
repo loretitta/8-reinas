@@ -1,0 +1,47 @@
+body{
+	font-family:sans-serif;
+}
+h1{
+	font-size:30px;
+	font-weight:bold;
+	font-variant:small-caps;
+	padding:10px;
+	border-bottom: 1px solid black;
+}
+
+h2{
+	font-size:20px;
+	font-weight:bold;
+	font-variant:small-caps;
+	padding:10px 10px 10px 20px;
+	background-color:#F5F5F5;
+}
+
+h3{
+	font-size:15px;
+	font-weight:bold;
+	padding:10px 10px 10px 30px;
+}
+
+p{
+	font-size:15px;
+	padding:10px 10px 10px 40px;
+}
+p.breadcrumbs{
+	font-size:10px;
+	padding:10px;
+}
+p.finePrint{
+	font-size:10px;
+	color:#AAA;
+}
+
+ul{
+	font-size:15px;
+	padding:10px 10px 10px 40px;
+}
+
+ol{
+	font-size:15px;
+	padding:10px 10px 10px 40px;
+}

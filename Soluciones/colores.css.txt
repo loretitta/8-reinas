@@ -1,0 +1,23 @@
+div{
+				float:left;
+				
+			}
+			div.black{
+				background-color:#B58862;
+				width:20px;
+				height:20px;
+				text-align:center;
+				
+			}
+			div.white{
+				background-color:#F0D9B5;
+				width:20px;
+				height:20px;
+				text-align:center;
+				
+			}
+
+
+			<div style='margin:50px;border:1px solid black;'>
+
+			<input name="queens" type="text" /><input name="submit" type="submit" value="Go" />
