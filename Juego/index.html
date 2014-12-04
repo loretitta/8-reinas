@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" class="demo-1 no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Juego 8 reinas</title>
+		<link rel="shortcut icon" href="../favicon.ico">
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+		<script src="js/snap.svg-min.js"></script>
+		<!--[if IE]>
+  		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+
+<style type="text/css" media="screen">
+
+html,body {overflow:hidden;}
+
+</style>
+		<div class="container">
+			<!-- Top Navigation -->
+
+			<header class="codrops-header">
+				<h1>Tablero para jugar<span>Intente colocar las N reinas en el tablero de ajedrez vacío para que ninguna reina está "atacando" a otra</span><span>(No pueden haber dos reinas  en la misma fila, en la misma columna o a lo largo de la misma diagonal)</span></h1>
+			</header>
+
+<div id="centrar">
+<section id="grid" class="grid clearfix">
+
+
+<script language="javascript" src="jquery-1.8.3.js"></script>
+<body onload="createBtn()">
+
+
+<input type="text"  style="width:0px; height:0px; visibility: hidden;" id="txtN" value=8 />
+
+
+<input type="button" id="btnSol" value="Mostrar solucion" onclick = "showSolution()" />
+<br>
+<br>
+<div id ="cbtn" style = "width:400px;height:400px"></div>
+
+<div id = "winner"></div>
+
+<div id = "solution"></div>
+
+<script>
+var phpServerFile = "submituser.php";
+var nMin=4;
+var nMax=12;
+var n=8;
+var stopLoop = false;
+var countQ=0;
+var countCheck = new Array(nMax+1);
+var btnValue = new Array(nMax+1);
+var board = new Array(nMax+1);
+
+var ansCol = new Array(nMax+1);
+for (var i=1;i<=nMax;i++)
+{
+  btnValue[i]=new Array(nMax+1);
+	board[i]=new Array(nMax+1);
+}
+
+for (var i=1;i<=nMax;i++)
+{
+	ansCol[i]=1;
+
+}
+
+function createBtn()
+{
+
+	var sc=""
+
+	for (var i=1;i<=nMax;i++)
+	{
+		for (var j=1;j<=nMax;j++)
+		{
+			sc = sc+"<input type=\"button\" style=\"width:30px; height:30px;\" id=\"btnArray"+i+"a"+j+"\" value=\"   \" onclick = \"btnClick("+i+","+j+")\" />";
+		}
+		sc =sc+"<br>";
+	}
+	document.getElementById("cbtn").innerHTML=sc;
+
+	getN();
+
+	$(document).ready(function()
+	{
+		$("#winner").slideUp("slow");
+
+	});
+}
+
+
+function getN()
+{
+	if ((document.getElementById("txtN").value>=nMin) && (document.getElementById("txtN").value<=nMax))
+	{
+		n = document.getElementById("txtN").value;
+		resetBoard();
+		buildBoard();
+
+	}
+	else
+	{
+		alert("Please enter number of Queens\nBetween "+nMin+" - "+nMax);
+	}
+
+}
+
+function resetBoard()
+{
+	countQ =0;
+         	for (var i=1;i<=nMax; i++)
+         	{
+            		for (var j=1;j<=nMax; j++)
+            		{
+			document.getElementById("btnArray"+i+"a"+j).value="   ";
+			document.getElementById("btnArray"+i+"a"+j).disabled=false;
+			document.getElementById("btnArray"+i+"a"+j).style.visibility="hidden";
+			btnValue[i][j]=0;
+			board[i][j]=0;
+                                   }
+		countCheck[i]= false;
+	}
+}
+
+
+
+function buildBoard()
+{
+	for(var i=1;i<=n;i++)
+	{
+		for(var j=1;j<=n;j++)
+		{
+			document.getElementById("btnArray"+i+"a"+j).style.visibility="visible";
+		}
+	}
+}
+
+
+function btnClick(ai,aj)
+{
+	var x = 0;
+	var y = 0;
+	x=ai;
+	y=aj;
+	if (document.getElementById("btnArray"+x+"a"+y).value == "   ")
+	{
+
+
+		var countCh = 1;
+		while (countCheck[countCh])
+		{
+			countCh = countCh+1;
+		}
+		countCheck[countCh] = true;
+		document.getElementById("btnArray"+x+"a"+y).value = countCh;
+		btnValue[x][y] = btnValue[x][y]+1;
+
+		countQ = countQ+1;
+
+
+		//disable in row
+		for (var i=1;i<=n;i++)
+                		{
+                    		if(i != x)
+                    		{
+                        			btnValue[i][y]=btnValue[i][y]-1;
+                            			document.getElementById("btnArray"+i+"a"+y).disabled=true;
+                    		}
+                		}
+
+		//disable in col
+		for (var j=1;j<=n;j++)
+                		{
+                    		if(j != y)
+                    		{
+                        			btnValue[x][j]=btnValue[x][j]-1;
+                            			document.getElementById("btnArray"+x+"a"+j).disabled=true;
+                    		}
+                		}
+
+		//disable upper left diagonal
+                		var tmpX = x;
+                		var tmpY = y;
+                		while ((tmpX>1) && (tmpY>1))
+                		{
+                   		tmpX=tmpX-1;
+                    		tmpY=tmpY-1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+                        	document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+                		}
+
+		//disable lower left diagonal
+                		tmpX = x;
+                		tmpY = y;
+                		while ((tmpX<n) && (tmpY<n))
+                		{
+                   		tmpX=tmpX+1;
+                    		tmpY=tmpY+1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+                        	document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+                		}
+
+		//disable upper right diagonal
+                		tmpX = x;
+                		tmpY = y;
+                		while ((tmpX>1) && (tmpY<n))
+                		{
+                   		tmpX=tmpX-1;
+                    		tmpY=tmpY+1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+                        	document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+                		}
+
+		//disable lower right diagonal
+                		tmpX = x;
+                		tmpY = y;
+                		while ((tmpX<n) && (tmpY>1))
+                		{
+                   		tmpX=tmpX+1;
+                    		tmpY=tmpY-1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+                        	document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+                		}
+
+		if (countQ == n)
+		{
+			conGratulation();
+		}
+
+	}
+	else
+	{
+		countQ = countQ-1;
+		countCheck[document.getElementById("btnArray"+x+"a"+y).value] = false;
+		document.getElementById("btnArray"+x+"a"+y).value = "   ";
+		btnValue[x][y]=btnValue[x][y]-1;
+
+		//enable in row
+                		for (var i=1;i<=n;i++)
+                		{
+                    		if(i != x)
+                    		{
+                        			btnValue[i][y]=btnValue[i][y]+1;
+                        			if (btnValue[i][y]>=0)
+                        			{
+                            				document.getElementById("btnArray"+i+"a"+y).disabled=false;
+                        			}
+                    		}
+                		}
+
+		//enable in col
+                		for (var j=1;j<=n;j++)
+                		{
+                    		if(j != y)
+                    		{
+                        			btnValue[x][j]=btnValue[x][j]+1;
+                        			if (btnValue[x][j]>=0)
+                        			{
+                            				document.getElementById("btnArray"+x+"a"+j).disabled=false;
+                        			}
+                    		}
+                		}
+
+		//enable in upper left diagonal
+		var tmpX = x;
+		var tmpY = y;
+
+                		while ((tmpX>1) && (tmpY>1))
+                		{
+                    		tmpX=tmpX-1;
+                    		tmpY=tmpY-1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+                    		if (btnValue[tmpX][tmpY]>=0)
+                    		{
+                        			document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+                    		}
+
+                		}
+
+
+		//enable in lower left diagonal
+		tmpX = x;
+		tmpY = y;
+
+                		while ((tmpX<n) && (tmpY<n))
+                		{
+                    		tmpX=tmpX+1;
+                    		tmpY=tmpY+1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+                    		if (btnValue[tmpX][tmpY]>=0)
+                    		{
+                        			document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+                    		}
+
+                		}
+
+		//enable in upper right diagonal
+		tmpX = x;
+		tmpY = y;
+
+                		while ((tmpX>1) && (tmpY<n))
+                		{
+                    		tmpX=tmpX-1;
+                    		tmpY=tmpY+1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+                    		if (btnValue[tmpX][tmpY]>=0)
+                    		{
+                        			document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+                    		}
+
+                		}
+
+		//enable in lower right diagonal
+		tmpX = x;
+		tmpY = y;
+
+                		while ((tmpX<n) && (tmpY>1))
+                		{
+                    		tmpX=tmpX+1;
+                    		tmpY=tmpY-1;
+                    		btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+                    		if (btnValue[tmpX][tmpY]>=0)
+                    		{
+                        			document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+                    		}
+
+                		}
+
+	}
+}
+
+function showWinner()
+{
+	$(document).ready(function()
+	{
+
+		variableString = 'fname='+''+'&fqueen='+''+'&fdate='+'';
+
+		$.post
+		(
+			phpServerFile,
+			variableString,
+			function(databack,status)
+			{
+				$("#winner").html(databack);
+  				//alert("Data: " + databack + "\nStatus: " + status);
+			}
+		);
+
+
+		$("#winner").slideToggle("slow");
+
+
+
+	});
+
+}
+
+function submitUser(n,q,d)
+{
+	$(document).ready(function()
+	{
+
+		variableString = 'fname='+n+'&fqueen='+q+'&fdate='+d;
+
+		$.post
+		(
+			phpServerFile,
+			variableString,
+			function(databack,status)
+			{
+				$("#winner").html(databack);
+  				//alert("Data: " + databack + "\nStatus: " + status);
+			}
+		);
+
+		//jQuery.ajax
+		//({
+		//	type: 'POST',
+		//	url: 'submituser.php',
+		//	data: variableString,
+		//	function(databack,status)
+		//	{
+		//		$("#winner").text(databack);
+  		//		alert("Data: " + data + "\nStatus: " + status);
+		//	}
+     		//});
+
+		$("#winner").slideDown("slow");
+
+	});
+
+}
+
+
+function conGratulation()
+{
+	var myName = prompt("You win","Your name");
+	var myDate = new Date();
+	myDateD = myDate.toDateString();
+	myDateT= myDate.toTimeString();
+	myDateT = myDateT.split(" ");
+	myDate=myDateD+" "+myDateT[0];
+	if (myName !=null)
+	{
+		submitUser(myName,n,myDate);
+	}
+
+}
+
+function showSolution()
+{
+	var c=confirm(" -_-\"esfuerzate un poco mas");
+	if (c==true)
+	{
+		getN();
+		stopLoop = false;
+		findSol(1);
+		ansCol[n]=ansCol[n]+1;
+		if (ansCol[n] >n)
+		{
+			ansCol[n-1]=ansCol[n-1]+1;
+		}
+	}
+	else
+	{
+		alert("Good, I know you can do it");
+	}
+}
+
+function findSol(aRowID)
+{
+	var rowID = 0;
+	rowID = aRowID;
+
+	if (ansCol[rowID] >n)
+	{
+		ansCol[rowID] =1;
+	}
+
+	while (ansCol[rowID]<=n)
+	{
+		if (board[rowID][ansCol[rowID]]== 0)
+		{
+			if (rowID == n)
+			{
+				printSol();
+				stopLoop = true;
+				return;
+			}
+
+			disBoard(ansCol[rowID],rowID);
+			findSol(rowID+1);
+			enBoard(ansCol[rowID],rowID);
+		}
+           		if (stopLoop)
+		{
+			return;
+		}
+		ansCol[rowID] = ansCol[rowID]+1;
+
+	}
+
+	return;
+}
+
+function printSol()
+{
+	var tmp;
+	tmp = ""
+	var t = 1;
+	var ansCopy = new Array(nMax+1);
+	for (var i=1;i<=nMax;i++)
+	{
+		ansCopy[i]=ansCol[i];
+
+	}
+	var myAnima = window.setInterval(function(){timeSol()},800);
+	document.getElementById("btnSol").disabled=true;
+	function timeSol()
+	{
+		tmp = tmp+"row = "+t+" column = "+ansCopy[t]+"<br>";
+		$("#solution").html(tmp);
+		btnClick(t,ansCopy[t]);
+		 if (t == n-1)
+		{
+			window.clearInterval(myAnima);
+			document.getElementById("btnSol").disabled=false;
+		}
+		t = t+1;
+	}
+}
+
+function disBoard(x,y)
+{
+	//disable in column
+	for (var i=y+1;i<=n;i++)
+	{
+		board[i][x]=board[i][x]-1;
+	}
+
+	var tmpX,tmpY;
+
+        	//disable in lower left
+        	tmpX = x;
+        	tmpY = y;
+        	while ((tmpX>1) && (tmpY<n))
+        	{
+		tmpX = tmpX-1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]-1;
+	}
+
+	//disable in lower right
+	tmpX = x;
+	tmpY = y;
+	while ((tmpX<n) && (tmpY<n))
+	{
+            		tmpX = tmpX+1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]-1;
+	}
+}
+
+function enBoard(x,y)
+{
+	//disable in column
+	for (var i=y+1;i<=n;i++)
+	{
+		board[i][x]=board[i][x]+1;
+	}
+
+	var tmpX,tmpY;
+
+        	//disable in lower left
+        	tmpX = x;
+        	tmpY = y;
+        	while ((tmpX>1) && (tmpY<n))
+        	{
+		tmpX = tmpX-1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]+1;
+	}
+
+	//disable in lower right
+	tmpX = x;
+	tmpY = y;
+	while ((tmpX<n) && (tmpY<n))
+	{
+            		tmpX = tmpX+1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]+1;
+	}
+}
+
+</script>
+
+
+
+		<script>
+			(function() {
+
+				function init() {
+					var speed = 250,
+						easing = mina.easeinout;
+
+					[].slice.call ( document.querySelectorAll( '#grid > a' ) ).forEach( function( el ) {
+						var s = Snap( el.querySelector( 'svg' ) ), path = s.select( 'path' ),
+							pathConfig = {
+								from : path.attr( 'd' ),
+								to : el.getAttribute( 'data-path-hover' )
+							};
+
+						el.addEventListener( 'mouseenter', function() {
+							path.animate( { 'path' : pathConfig.to }, speed, easing );
+						} );
+
+						el.addEventListener( 'mouseleave', function() {
+							path.animate( { 'path' : pathConfig.from }, speed, easing );
+						} );
+					} );
+				}
+
+				init();
+
+			})();
+		</script>
+
+	</section>
+</div>
+	</body>
+</html>
