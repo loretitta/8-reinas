@@ -3,7 +3,7 @@ Ayudante: Marco Molina Hidalgo
 Integrantes:
 Loreta Astudillo. 
 Rodrigo Reyes.
-Rafael vivar.
+Rafael Vivar.
 Fabian Cordovez.
 
 En el siguiente proyecto se ha realizado el trabajo de las 8 reinas (el cual consiste en colocar 8 reinas evitando que se eliminaran entre ellas) mediante una aplicación en PHP con un diseño bonito. 
