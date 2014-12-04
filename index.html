@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="demo-1 no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Proyecto Final 8 Reinas</title>
+
+		<link rel="shortcut icon" href="../favicon.ico">
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+		<script src="js/snap.svg-min.js"></script>
+		<!--[if IE]>
+  		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<style type="text/css" media="screen">
+
+html,body {overflow:hidden;}
+
+</style>
+		<div class="container">
+			<!-- Top Navigation -->
+
+			<header class="codrops-header">
+				<h1>Proyecto Final 8 Reinas<span>Analisis de algoritmo <a href="https://www.facebook.com/marco.hidalgo">Ayudante Marco Molina</a></span></h1>
+			</header>
+
+<div id="centrado">
+			<section id="grid" class="grid clearfix">
+				<a href="Soluciones/nqueens_2.php" data-path-hover="m 180,34.57627 -180,0 L 0,0 180,0 z">
+					<figure>
+						<img src="img/2.png" />
+						<svg viewBox="0 0 180 320" preserveAspectRatio="none"><path d="M 180,160 0,218 0,0 180,0 z"/></svg>
+						<figcaption>
+							<h2>Soluciones</h2>
+							<p>Genera todas las soluciones posibles.</p>
+							<button>Ver</button>
+						</figcaption>
+					</figure>
+				</a>
+				<a href="Juego/index.html" data-path-hover="m 180,34.57627 -180,0 L 0,0 180,0 z">
+					<figure>
+						<img src="img/6.png" />
+						<svg viewBox="0 0 180 320" preserveAspectRatio="none"><path d="M 180,160 0,218 0,0 180,0 z"/></svg>
+						<figcaption>
+							<h2>Juego</h2>
+							<p>Un tablero en el que se puede ir poniendo las reinas.</p>
+							<button>Ver</button>
+						</figcaption>
+					</figure>
+				</a>
+
+		</section>
+</div>
+		</div><!-- /container -->
+		<script>
+			(function() {
+
+				function init() {
+					var speed = 250,
+						easing = mina.easeinout;
+
+					[].slice.call ( document.querySelectorAll( '#grid > a' ) ).forEach( function( el ) {
+						var s = Snap( el.querySelector( 'svg' ) ), path = s.select( 'path' ),
+							pathConfig = {
+								from : path.attr( 'd' ),
+								to : el.getAttribute( 'data-path-hover' )
+							};
+
+						el.addEventListener( 'mouseenter', function() {
+							path.animate( { 'path' : pathConfig.to }, speed, easing );
+						} );
+
+						el.addEventListener( 'mouseleave', function() {
+							path.animate( { 'path' : pathConfig.from }, speed, easing );
+						} );
+					} );
+				}
+
+				init();
+
+			})();
+		</script>
+	</body>
+</html>
